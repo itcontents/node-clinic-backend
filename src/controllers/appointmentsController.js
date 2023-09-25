@@ -6,19 +6,19 @@ const appointmentSchema = Joi.object({
   title: Joi.string().min(3).required(),
   doctor: Joi.string().min(2).required(),
   full_name: Joi.string().min(6).required(),
-  first_name: Joi.string().min(6).required(),
-  last_name: Joi.string().min(6).required(),
-  appointment_date: Joi.string().min(6).required(),
-  status: Joi.string().min(6).required(),
-  contact: Joi.string().min(6).required(),
+  first_name: Joi.string().min(2).required(),
+  last_name: Joi.string().min(2).required(),
+  appointment_date: Joi.date().required(),
+  status: Joi.string().min(4).required(),
+  contact: Joi.number().min(10).required(),
   other_info: Joi.string().min(6).required(),
-  time_from: Joi.string().min(6).required(),
-  time_to: Joi.string().min(6).required(),
+  time_from: Joi.required(),
+  time_to: Joi.required(),
   email: Joi.string().email().required(),
   conditions: Joi.string().min(3).required(),
   therapy_date: Joi.date().required(),
   address: Joi.string().min(6).required(),
-  age: Joi.number().integer().min(1).required(),
+  age: Joi.number().integer().required(),
   notes: Joi.string().min(6).required(),
 });
 
@@ -53,9 +53,9 @@ const createAppointment = async (req, res) => {
       // SQL query with placeholders for all columns
       const query = `
     INSERT INTO appointments (
-      id, title, doctor, FullName, firstName, lastName, 
-      date, status, contact, otherInfo, timeFrom, timeTo, 
-      email, conditions, therapyDate, address, age, notes
+      id, title, doctor, full_name, first_name, last_name,
+      appointment_date, status, contact, other_info, time_from, time_to, 
+      email, conditions, therapy_date, address, age, notes
     ) 
     VALUES (
       uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
