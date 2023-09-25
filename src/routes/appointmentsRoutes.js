@@ -4,7 +4,6 @@ const router = express.Router();
 
 const {
   getAllAppointments,
-  getAppointmentById,
   createAppointment,
   deleteAppointment,
   updateById,
@@ -13,7 +12,6 @@ const {
 router.route("/create").post(createAppointment);
 router.route("/:id").put(updateById);
 router.route("/").get(getAllAppointments);
-router.route("/:id").get(getAppointmentById);
 router.route("/:id").delete(deleteAppointment);
 
 
