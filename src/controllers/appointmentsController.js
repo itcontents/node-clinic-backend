@@ -22,6 +22,8 @@ const appointmentSchema = Joi.object({
   notes: Joi.string().min(6).required(),
 });
 
+
+//create appointment
 const createAppointment = async (req, res) => {
   const { error } = appointmentSchema.validate(req.body);
   if (error) {
@@ -50,15 +52,15 @@ const createAppointment = async (req, res) => {
     try {
       // SQL query with placeholders for all columns
       const query = `
-        INSERT INTO appointments (
-          id, title, doctor, full_name, first_name, last_name, appointment_date,
-          status, contact, other_info, time_from, time_to, email, conditions,
-          therapy_date, address, age, notes
-        ) 
-        VALUES (
-          uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-        )
-      `;
+    INSERT INTO appointments (
+      id, title, doctor, FullName, firstName, lastName, 
+      date, status, contact, otherInfo, timeFrom, timeTo, 
+      email, conditions, therapyDate, address, age, notes
+    ) 
+    VALUES (
+      uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    )
+  `;
 
       const values = [
         appointmentData.title,
@@ -96,10 +98,87 @@ const createAppointment = async (req, res) => {
       console.error("Error executing query:", error);
       res.status(500).json({ error: error });
     }
+
   }
 };
 
-const updateById = async (req, res) => {};
+//updating by appointments
+const updateById = async (req, res) => {
+  const appointmentId = req.params.id; // Extract the appointment ID from the URL
+
+  try {
+    // Extract the updated data from the request body
+    const updatedAppointmentData = {
+      title: req.body.title,
+      doctor: req.body.doctor,
+      full_name: req.body.full_name,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      appointment_date: req.body.appointment_date,
+      status: req.body.status,
+      contact: req.body.contact,
+      other_info: req.body.other_info,
+      time_from: req.body.time_from,
+      time_to: req.body.time_to,
+      email: req.body.email,
+      conditions: req.body.conditions,
+      therapy_date: req.body.therapy_date,
+      address: req.body.address,
+      age: req.body.age,
+      notes: req.body.notes,
+    };
+
+    // Define the SQL query to update the appointment
+    const query = `
+      UPDATE appointments
+      SET title = ?, doctor = ?, full_name = ?, first_name = ?, last_name = ?,
+      appointment_date = ?, status = ?, contact = ?, other_info = ?, time_from = ?,
+      time_to = ?, email = ?, conditions = ?, therapy_date = ?, address = ?, age = ?, notes = ?
+      WHERE id = ?`;
+
+    // Define the values to replace the placeholders in the query
+    const values = [
+      updatedAppointmentData.title,
+      updatedAppointmentData.doctor,
+      updatedAppointmentData.full_name,
+      updatedAppointmentData.first_name,
+      updatedAppointmentData.last_name,
+      updatedAppointmentData.appointment_date,
+      updatedAppointmentData.status,
+      updatedAppointmentData.contact,
+      updatedAppointmentData.other_info,
+      updatedAppointmentData.time_from,
+      updatedAppointmentData.time_to,
+      updatedAppointmentData.email,
+      updatedAppointmentData.conditions,
+      updatedAppointmentData.therapy_date,
+      updatedAppointmentData.address,
+      updatedAppointmentData.age,
+      updatedAppointmentData.notes,
+      appointmentId, // The last value is the ID used in the WHERE clause
+    ];
+
+    // Use a parameterized query to update the appointment
+    pool.query(query, values, (error, results) => {
+      if (error) {
+        console.error("Error executing query:", error);
+        res.status(500).json({ error: error });
+      } else {
+        res.json({
+          message: "Appointment updated successfully",
+          data: updatedAppointmentData,
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error updating appointment:", error);
+    res.status(500).json({ error: error });
+  }
+};
+
+
+//get all appointment
+
 const getAllAppointments = async (req, res) => {
 pool.query("SELECT * FROM appointments", (err, results) => {
     if (err) {
@@ -111,17 +190,39 @@ pool.query("SELECT * FROM appointments", (err, results) => {
     // Process the retrieved data here
   });
 };
+
 const getAppointmentById = async (req, res) => {
-  res.json({ username: "john_doe", email: "john@example.com" });
+
 };
+//delete appointment from db
 const deleteAppointment = async (req, res) => {
-  res.json({ username: "john_doe", email: "john@example.com" });
+  const appointmentId = req.params.id; // Extract the appointment ID from the URL
+
+  try {
+    // Define the SQL query to delete the appointment by ID
+    const query = `
+      DELETE FROM appointments
+      WHERE id = ?`;
+
+    // Use a parameterized query to delete the appointment
+    pool.query(query, [appointmentId], (error, results) => {
+      if (error) {
+        console.error("Error executing query:", error);
+        res.status(500).json({ error: error });
+      } else {
+        res.json({ message: "Appointment deleted successfully" });
+      }
+    });
+  } catch (error) {
+    console.error("Error deleting appointment:", error);
+    res.status(500).json({ error: error });
+  }
 };
+
 
 module.exports = {
   createAppointment,
   updateById,
   getAllAppointments,
-  getAppointmentById,
   deleteAppointment,
 };
