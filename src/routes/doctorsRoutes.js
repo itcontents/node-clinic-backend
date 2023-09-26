@@ -1,23 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
-// Define a route to get all posts
-router.get('/', (req, res) => {
-    // Handle logic to fetch and return all posts
-    res.json([{ title: 'Post 1' }, { title: 'Post 2' }]);
-});
 
-// Define a route to create a new post
-router.post('/', (req, res) => {
-    // Handle logic to create a new post
-    res.json({ message: 'Post created successfully' });
-});
+const {
+    createDoctor,
+    updateDoctor,
+    getAllDoctors,
+    getDoctorById,
+    deleteDoctor
+} = require("../controllers/doctorsController");
 
-// Define a route to get a specific post by ID
-router.get('/:postId', (req, res) => {
-    const postId = req.params.postId;
-    // Handle logic to fetch and return a specific post by ID
-    res.json({ title: `Post ${postId}` });
-});
+
+//route to create a new doctor
+router.route('/create').post(createDoctor);
+router.route('/:id').put(updateDoctor);
+router.route('/').get(getAllDoctors);
+router.route('/:id').get(getDoctorById);
+router.route('/:id').delete(deleteDoctor);
 
 module.exports = router;

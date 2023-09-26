@@ -17,10 +17,12 @@ app.use(bodyParser.json()); //  middleware
 // Import routes
 const userRoutes = require("./routes/userRoutes");
 const appointmentsRoutes = require("./routes/appointmentsRoutes");
+const doctorsRoutes = require("./routes/doctorsRoutes");
 
 // Define routes
 app.use("/api/users", userRoutes);
 app.use("/api/appointments", appointmentsRoutes);
+app.use("/api/doctors", doctorsRoutes);
 
 // Start the server/profile
 const port = process.env.PORT || 3000;

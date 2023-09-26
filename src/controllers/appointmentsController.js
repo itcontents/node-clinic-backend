@@ -3,7 +3,7 @@ const pool = require("../db/db");
 //data validation on create
 
 const appointmentSchema = Joi.object({
-  title: Joi.string().min(3).required(),
+  title: Joi.string().min(2).required(),
   doctor: Joi.string().min(2).required(),
   full_name: Joi.string().min(6).required(),
   first_name: Joi.string().min(2).required(),
@@ -192,8 +192,37 @@ pool.query("SELECT * FROM appointments", (err, results) => {
 };
 
 const getAppointmentById = async (req, res) => {
+  console.log(req.body)
+  console.log(req.body)
+  const appointmentId = req.params.id; // Extract the appointment ID from the URL
 
+  try {
+    // Define the SQL query to select the appointment by ID
+    const query = `
+      SELECT * FROM appointments
+      WHERE id = ?`;
+
+    // Use a parameterized query to retrieve the appointment
+    pool.query(query, [appointmentId], (error, results) => {
+      if (error) {
+        console.error("Error executing query:", error);
+        res.status(500).json({ error: error });
+      } else {
+        if (results.length === 0) {
+          // If no appointment with the given ID is found, return a 404 response
+          res.status(404).json({ message: "Appointment not found" });
+        } else {
+          // If the appointment is found, return it in the response
+          res.json({ appointment: results[0] });
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Error retrieving appointment:", error);
+    res.status(500).json({ error: error });
+  }
 };
+
 //delete appointment from db
 const deleteAppointment = async (req, res) => {
   const appointmentId = req.params.id; // Extract the appointment ID from the URL
@@ -225,4 +254,5 @@ module.exports = {
   updateById,
   getAllAppointments,
   deleteAppointment,
+  getAppointmentById
 };
