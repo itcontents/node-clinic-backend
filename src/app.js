@@ -9,7 +9,7 @@ const app = express(() => {
 app.use(cors());
 
 // Import configuration
-// require('./config/env'); // Load environment variables
+// require('./config/.env'); // Load environment variables
 
 // Import middleware
 app.use(bodyParser.json()); //  middleware
@@ -18,11 +18,13 @@ app.use(bodyParser.json()); //  middleware
 const userRoutes = require("./routes/userRoutes");
 const appointmentsRoutes = require("./routes/appointmentsRoutes");
 const doctorsRoutes = require("./routes/doctorsRoutes");
+const patientRoutes = require("./routes/patientRoutes");
 
 // Define routes
 app.use("/api/users", userRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/doctors", doctorsRoutes);
+app.use("/api/patients", patientRoutes);
 
 // Start the server/profile
 const port = process.env.PORT || 3000;

@@ -18,10 +18,9 @@ const appointmentSchema = Joi.object({
   conditions: Joi.string().min(3).required(),
   therapy_date: Joi.date().required(),
   address: Joi.string().min(6).required(),
-  age: Joi.number().integer().required(),
+  age: Joi.number().required(),
   notes: Joi.string().min(6).required(),
 });
-
 
 //create appointment
 const createAppointment = async (req, res) => {
@@ -98,7 +97,6 @@ const createAppointment = async (req, res) => {
       console.error("Error executing query:", error);
       res.status(500).json({ error: error });
     }
-
   }
 };
 
@@ -176,24 +174,21 @@ const updateById = async (req, res) => {
   }
 };
 
-
 //get all appointment
 
 const getAllAppointments = async (req, res) => {
-pool.query("SELECT * FROM appointments", (err, results) => {
+  pool.query("SELECT * FROM appointments", (err, results) => {
     if (err) {
       console.error("Error executing query:", err);
       return;
     }
     console.log("Appointments:", results);
-    res.json(results);
+    res.json(results.rows);
     // Process the retrieved data here
   });
 };
 
 const getAppointmentById = async (req, res) => {
-  console.log(req.body)
-  console.log(req.body)
   const appointmentId = req.params.id; // Extract the appointment ID from the URL
 
   try {
@@ -248,11 +243,10 @@ const deleteAppointment = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createAppointment,
   updateById,
   getAllAppointments,
   deleteAppointment,
-  getAppointmentById
+  getAppointmentById,
 };
