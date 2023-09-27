@@ -19,12 +19,14 @@ const userRoutes = require("./routes/userRoutes");
 const appointmentsRoutes = require("./routes/appointmentsRoutes");
 const doctorsRoutes = require("./routes/doctorsRoutes");
 const patientRoutes = require("./routes/patientRoutes");
+const paymentsRoutes = require("./routes/paymentsRoutes");
 
 // Define routes
 app.use("/api/users", userRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/doctors", doctorsRoutes);
 app.use("/api/patients", patientRoutes);
+app.use("/api/payments", paymentsRoutes);
 
 // Start the server/profile
 const port = process.env.PORT || 3000;

@@ -183,7 +183,7 @@ const getAllAppointments = async (req, res) => {
       return;
     }
     console.log("Appointments:", results);
-    res.json(results.rows);
+    res.json(results);
     // Process the retrieved data here
   });
 };

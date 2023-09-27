@@ -75,11 +75,39 @@ const login = (req, res) => {
 };
 
 const getAllUsers = async (req, res) => {
-  res.json({ username: "john_doe", email: "john@example.com" });
+  try{
+    const query = "SELECT * FROM users";
+    const result = await pool.query(query, (err, result) => {
+      if(err) {
+        console.error("Error executing query:", err);
+        res.status(500).json({ error: error });
+        return;
+      }else {
+        console.log("Users:", results);
+        res.json(results);
+      }
+    });
+  }catch(err){
+
+  }
 };
 
 const getUser = async (req, res) => {
-  res.send("Hello am user!");
+  try {
+    const query = "SELECT * FROM users WHERE id =?";
+    const user = await pool.query(query, [req.params.id], (error, result) => {
+      if(error) {
+        console.error("Error executing query:", error);
+        res.status(500).json({ error: error });
+        return;
+      }else {
+        console.log("User:", user);
+        res.json(user);
+      }
+    });
+  }catch(err){
+
+  }
 };
 
 module.exports = { getAllUsers, getUser, userRegistration, login };
