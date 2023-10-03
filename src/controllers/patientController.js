@@ -200,7 +200,7 @@ const getPatient = async (req, res) => {
   try{
     const query = `SELECT * FROM patients WHERE id =?`;
 
-    await pool.query(query, [patientId], (error, results) => {
+     pool.query(query, [patientId], (error, results) => {
       if (error) {
         console.error("Error executing query:", error);
         res.status(500).json({error: error});
@@ -223,7 +223,7 @@ const deletePatient = async (req, res) => {
   try{
     const query = `DELETE FROM patients WHERE id =?`;
 
-    await pool.query(query, [patientId], (error, results) => {
+     pool.query(query, [patientId], (error, results) => {
       if (error) {
         console.error("Error executing query:", error);
         res.status(500).json({error: error});

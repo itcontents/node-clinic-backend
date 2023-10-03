@@ -1,25 +1,25 @@
 const Joi = require("joi");
 const pool = require("../db/db");
+
 //data validation on create
 
 const appointmentSchema = Joi.object({
   title: Joi.string().min(2).required(),
   doctor: Joi.string().min(2).required(),
-  full_name: Joi.string().min(6).required(),
+  full_name: Joi.string().min(4).required(),
   first_name: Joi.string().min(2).required(),
   last_name: Joi.string().min(2).required(),
   appointment_date: Joi.date().required(),
-  status: Joi.string().min(4).required(),
+  status: Joi.string().required(),
   contact: Joi.number().min(10).required(),
-  other_info: Joi.string().min(6).required(),
-  time_from: Joi.required(),
-  time_to: Joi.required(),
+  time_from: Joi.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).required(),
+  time_to: Joi.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).required(),
   email: Joi.string().email().required(),
   conditions: Joi.string().min(3).required(),
-  therapy_date: Joi.date().required(),
+  next_appointment: Joi.string(),
   address: Joi.string().min(6).required(),
   age: Joi.number().required(),
-  notes: Joi.string().min(6).required(),
+  notes: Joi.string().required(),
 });
 
 //create appointment
@@ -37,12 +37,11 @@ const createAppointment = async (req, res) => {
       appointment_date: req.body.appointment_date,
       status: req.body.status,
       contact: req.body.contact,
-      other_info: req.body.other_info,
       time_from: req.body.time_from,
       time_to: req.body.time_to,
       email: req.body.email,
       conditions: req.body.conditions,
-      therapy_date: req.body.therapy_date,
+      next_appointment: req.body.next_appointment,
       address: req.body.address,
       age: req.body.age,
       notes: req.body.notes,
@@ -53,11 +52,11 @@ const createAppointment = async (req, res) => {
       const query = `
     INSERT INTO appointments (
       id, title, doctor, full_name, first_name, last_name,
-      appointment_date, status, contact, other_info, time_from, time_to, 
-      email, conditions, therapy_date, address, age, notes
+      appointment_date, status, contact, time_from, time_to, 
+      email, conditions, next_appointment, address, age, notes
     ) 
     VALUES (
-      uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )
   `;
 
@@ -70,12 +69,11 @@ const createAppointment = async (req, res) => {
         appointmentData.appointment_date,
         appointmentData.status,
         appointmentData.contact,
-        appointmentData.other_info,
         appointmentData.time_from,
         appointmentData.time_to,
         appointmentData.email,
         appointmentData.conditions,
-        appointmentData.therapy_date,
+        appointmentData.next_appointment,
         appointmentData.address,
         appointmentData.age,
         appointmentData.notes,
@@ -85,17 +83,20 @@ const createAppointment = async (req, res) => {
       pool.query(query, values, (error, results) => {
         if (error) {
           console.error("Error executing query:", error);
-          res.status(500).json({ error: error });
+
+          res.status(500).json({ error: error.details[0].message });
         } else {
           res.json({
             message: "Appointment created successfully",
             data: appointmentData,
+
           });
+
         }
       });
     } catch (error) {
       console.error("Error executing query:", error);
-      res.status(500).json({ error: error });
+      res.status(500).json({ error: error.details[0].message });
     }
   }
 };
@@ -115,12 +116,11 @@ const updateById = async (req, res) => {
       appointment_date: req.body.appointment_date,
       status: req.body.status,
       contact: req.body.contact,
-      other_info: req.body.other_info,
       time_from: req.body.time_from,
       time_to: req.body.time_to,
       email: req.body.email,
       conditions: req.body.conditions,
-      therapy_date: req.body.therapy_date,
+      next_appointment: req.body.next_appointment,
       address: req.body.address,
       age: req.body.age,
       notes: req.body.notes,
@@ -130,8 +130,8 @@ const updateById = async (req, res) => {
     const query = `
       UPDATE appointments
       SET title = ?, doctor = ?, full_name = ?, first_name = ?, last_name = ?,
-      appointment_date = ?, status = ?, contact = ?, other_info = ?, time_from = ?,
-      time_to = ?, email = ?, conditions = ?, therapy_date = ?, address = ?, age = ?, notes = ?
+      appointment_date = ?, status = ?, contact = ? , time_from = ?,
+      time_to = ?, email = ?, conditions = ?, next_appointment = ?, address = ?, age = ?, notes = ?
       WHERE id = ?`;
 
     // Define the values to replace the placeholders in the query
@@ -144,12 +144,11 @@ const updateById = async (req, res) => {
       updatedAppointmentData.appointment_date,
       updatedAppointmentData.status,
       updatedAppointmentData.contact,
-      updatedAppointmentData.other_info,
       updatedAppointmentData.time_from,
       updatedAppointmentData.time_to,
       updatedAppointmentData.email,
       updatedAppointmentData.conditions,
-      updatedAppointmentData.therapy_date,
+      updatedAppointmentData.next_appointment,
       updatedAppointmentData.address,
       updatedAppointmentData.age,
       updatedAppointmentData.notes,
